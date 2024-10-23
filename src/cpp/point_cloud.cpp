@@ -97,6 +97,14 @@ public:
     return laplacian;
   }
 
+  SparseMatrix<double> get_real_connection_laplacian() {
+    geom->requireConnectionLaplacian();
+    SparseMatrix<double> Lreal = geom->connectionLaplacian;
+    geom->unrequireConnectionLaplacian();
+
+    return Lreal;
+  }
+
   SparseMatrix<std::complex<double>> get_connection_laplacian() {
     geom->requireConnectionLaplacian();
 
@@ -122,6 +130,7 @@ public:
 
     return Lconn;
   }
+
 
   DenseMatrix<double> transport_tangent_vectors(Vector<int64_t> sourcePoints, DenseMatrix<double> values) {
 
@@ -220,6 +229,7 @@ void bind_point_cloud(py::module& m) {
         .def("compute_distance_multisource", &PointCloudHeatSolverEigen::compute_distance_multisource, py::arg("source_points"))
         .def("extend_scalar", &PointCloudHeatSolverEigen::extend_scalar, py::arg("source_points"), py::arg("source_values"))
         .def("get_tangent_frames", &PointCloudHeatSolverEigen::get_tangent_frames)
+        .def("get_real_connection_laplacian", &PointCloudHeatSolverEigen::get_real_connection_laplacian)
         .def("get_connection_laplacian", &PointCloudHeatSolverEigen::get_connection_laplacian)
         .def("get_laplacian", &PointCloudHeatSolverEigen::get_laplacian)
         .def("transport_tangent_vector", &PointCloudHeatSolverEigen::transport_tangent_vector, py::arg("source_point"), py::arg("vector"))

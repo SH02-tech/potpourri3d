@@ -25,6 +25,9 @@ class PointCloudHeatSolver():
     
     def get_laplacian(self):
         return self.bound_solver.get_laplacian()
+
+    def get_real_connection_laplacian(self):
+        return self.bound_solver.get_real_connection_laplacian()
     
     def get_connection_laplacian(self):
         return self.bound_solver.get_connection_laplacian()
