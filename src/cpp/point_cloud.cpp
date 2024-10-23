@@ -89,6 +89,14 @@ public:
         EigenMap<double, 3>(basisX), EigenMap<double, 3>(basisY), EigenMap<double, 3>(geom->normals));
   }
 
+  SparseMatrix<double> get_laplacian() {
+    geom->requireLaplacian();
+    SparseMatrix<double> laplacian = geom->laplacian;
+    geom->unrequireLaplacian();
+
+    return laplacian;
+  }
+
   SparseMatrix<std::complex<double>> get_connection_laplacian() {
     geom->requireConnectionLaplacian();
 
@@ -213,6 +221,7 @@ void bind_point_cloud(py::module& m) {
         .def("extend_scalar", &PointCloudHeatSolverEigen::extend_scalar, py::arg("source_points"), py::arg("source_values"))
         .def("get_tangent_frames", &PointCloudHeatSolverEigen::get_tangent_frames)
         .def("get_connection_laplacian", &PointCloudHeatSolverEigen::get_connection_laplacian)
+        .def("get_laplacian", &PointCloudHeatSolverEigen::get_laplacian)
         .def("transport_tangent_vector", &PointCloudHeatSolverEigen::transport_tangent_vector, py::arg("source_point"), py::arg("vector"))
         .def("transport_tangent_vectors", &PointCloudHeatSolverEigen::transport_tangent_vectors, py::arg("source_points"), py::arg("vectors"))
         .def("compute_log_map", &PointCloudHeatSolverEigen::compute_log_map, py::arg("source_point"));
