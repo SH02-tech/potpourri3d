@@ -22,6 +22,9 @@ class PointCloudHeatSolver():
     
     def get_tangent_frames(self):
         return self.bound_solver.get_tangent_frames()
+
+    def get_mass_matrix(self):
+        return self.bound_solver.get_mass_matrix()
     
     def get_laplacian(self):
         return self.bound_solver.get_laplacian()

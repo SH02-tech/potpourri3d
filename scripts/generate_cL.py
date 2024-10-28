@@ -32,13 +32,31 @@ def generate_cl(point_cloud):
 
 	return cL, cL_real
 
-def generate_report(cL, cL_real):
+def generate_mass_matrix(point_cloud):
+	"""
+	Generate mass matrix from a given point cloud.
+	"""
+	solver = pp3d.PointCloudHeatSolver(point_cloud)
+
+	return solver.get_mass_matrix()
+
+def generate_report(cL, cL_real, M, output_print = True):
 	os.makedirs('scripts/sample', exist_ok=True)
+
+	if output_print:
+		print('cL_real:')
+		print(cL_real)
+		print('cL:')
+		print(cL)
+		print('M:')
+		print(M)
 
 	scipy.sparse.save_npz('scripts/sample/real_cl', cL_real)
 	scipy.sparse.save_npz('scripts/sample/complex_cl', cL)
+	scipy.sparse.save_npz('scripts/sample/mass_matrix', M)
 	scipy.io.savemat('scripts/sample/real_cl.mat', {'real_cl': cL_real})
 	scipy.io.savemat('scripts/sample/complex_cl.mat', {'complex_cl': cL})
+	scipy.io.savemat('scripts/sample/mass_matrix.mat', {'mass_matrix': M})
 
 def is_hermitian(A):
     # Calculate the conjugate transpose of A
@@ -63,11 +81,11 @@ if __name__ == '__main__':
 
 	P = trimesh.load(args.input).vertices
 	cL, cL_real = generate_cl(P)
-	# cL, cL_real = generate_random_cl()
+	M = generate_mass_matrix(P)
 
 	is_hermitian, distance = is_hermitian(cL.toarray())
 
 	print(f'Is cL Hermitian? {is_hermitian}')
 	print(f'Distance between cL and its conjugate transpose: {distance}')
 
-	generate_report(cL, cL_real)
+	generate_report(cL, cL_real, M)

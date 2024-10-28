@@ -97,6 +97,19 @@ public:
     return laplacian;
   }
 
+  SparseMatrix<double> get_mass_matrix() {
+    SparseMatrix<double> M;
+    geom->requireTuftedTriangulation();
+    geom->tuftedGeom->requireVertexLumpedMassMatrix();
+
+    // Note: consider using Galerkin mass matrix (more accurate)
+    M = geom->tuftedGeom->vertexLumpedMassMatrix;
+
+    geom->tuftedGeom->unrequireVertexLumpedMassMatrix();
+    geom->unrequireTuftedTriangulation();
+    return M;
+  }
+
   SparseMatrix<double> get_real_connection_laplacian() {
     geom->requireConnectionLaplacian();
     SparseMatrix<double> Lreal = geom->connectionLaplacian;
@@ -232,6 +245,7 @@ void bind_point_cloud(py::module& m) {
         .def("get_real_connection_laplacian", &PointCloudHeatSolverEigen::get_real_connection_laplacian)
         .def("get_connection_laplacian", &PointCloudHeatSolverEigen::get_connection_laplacian)
         .def("get_laplacian", &PointCloudHeatSolverEigen::get_laplacian)
+        .def("get_mass_matrix", &PointCloudHeatSolverEigen::get_mass_matrix)
         .def("transport_tangent_vector", &PointCloudHeatSolverEigen::transport_tangent_vector, py::arg("source_point"), py::arg("vector"))
         .def("transport_tangent_vectors", &PointCloudHeatSolverEigen::transport_tangent_vectors, py::arg("source_points"), py::arg("vectors"))
         .def("compute_log_map", &PointCloudHeatSolverEigen::compute_log_map, py::arg("source_point"));
